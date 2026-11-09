@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minimal Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border-radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem 1rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #0f172a;
+    }
+
+    header p {
+      color: var(--text-sub);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    /* Main Grid */
+    main {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+      gap: 2rem;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* Neal.fun style Card */
+    .game-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 2px solid #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 30px -10px rgba(59, 130, 246, 0.15);
+      border-color: var(--accent);
+    }
+
+    .icon-wrapper {
+      width: 100px;
+      height: 100px;
+      background: #eff6ff;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .game-card:hover .icon-wrapper {
+      transform: rotate(-6deg) scale(1.05);
+      background: #dbeafe;
+    }
+
+    .icon-wrapper svg {
+      width: 54px;
+      height: 54px;
+      fill: var(--accent);
+    }
+
+    .game-card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .game-card p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+    }
+
+    .play-btn {
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      padding: 0.75rem 1.75rem;
+      border-radius: 99px;
+      font-size: 0.95rem;
+      transition: background 0.2s ease;
+    }
+
+    .game-card:hover .play-btn {
+      background: var(--accent-hover);
+    }
+
+    /* Modal Overlay for Game */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #0f172a;
+      padding: 1.5rem;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      max-width: 95vw;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    canvas {
+      background: #1e293b;
+      border-radius: 12px;
+      margin-top: 1rem;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 3rem;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Hry & Experimenty</h1>
+    <p>Inšpirované zjednodušeným dizajnom neal.fun</p>
+  </header>
+
+  <main>
+    <div class="grid">
+      <!-- Ping Pong Card -->
+      <div class="game-card" onclick="openGame()">
+        <div class="icon-wrapper">
+          <!-- Ping Pong Racket SVG Icon -->
+          <svg viewBox="0 0 24 24">
+            <path d="M19.35 10.04C18.67 4.96 13.97 1.34 8.89 2.02C3.81 2.7 0.19 7.4 0.87 12.48C1.41 16.54 4.63 19.67 8.69 20.12L7.26 22.26C6.97 22.7 7.08 23.29 7.52 23.58C7.96 23.87 8.55 23.76 8.84 23.32L11.5 19.33C12.3 19.45 13.11 19.45 13.91 19.33L16.57 23.32C16.86 23.76 17.45 23.87 17.89 23.58C18.33 23.29 18.44 22.7 18.15 22.26L16.72 20.12C17.65 19.98 18.55 19.67 19.35 10.04ZM9.5 14C8.12 14 7 12.88 7 11.5C7 10.12 8.12 9 9.5 9C10.88 9 12 10.12 12 11.5C12 12.88 10.88 14 9.5 14Z" />
+          </svg>
+        </div>
+        <h2>Ping Pong</h2>
+        <p>Klasická arkádová hra. Hraj proti počítaču a získaj čo najviac bodov!</p>
+        <div class="play-btn">Spustiť hru</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Vytvorené pre zábavu 🏓</p>
+  </footer>
+
+  <!-- Game Modal -->
+  <div class="modal" id="gameModal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeGame()">&times;</button>
+      <canvas id="pongCanvas" width="600" height="400"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('gameModal');
+    const canvas = document.getElementById('pongCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let animId;
+    let audioCtx = null;
+
+    // Game Objects
+    const ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 8,
+      speedX: 5,
+      speedY: 3,
+      reset: function() {
+        this.x = canvas.width / 2;
+        this.y = canvas.height / 2;
+        this.speedX = -this.speedX;
+        this.speedY = (Math.random() - 0.5) * 6;
+      }
+    };
+
+    const player = {
+      x: 15,
+      y: canvas.height / 2 - 40,
+      width: 10,
+      height: 80,
+      score: 0
+    };
+
+    const ai = {
+      x: canvas.width - 25,
+      y: canvas.height / 2 - 40,
+      width: 10,
+      height: 80,
+      score: 0,
+      speed: 3.8
+    };
+
+    // Sound Generator (Web Audio API)
+    function playSound(freq) {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    // Mouse Controls
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const root = document.documentElement;
+      const mouseY = e.clientY - rect.top - root.scrollTop;
+      player.y = mouseY - player.height / 2;
+    });
+
+    // Touch Controls
+    canvas.addEventListener('touchmove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const touchY = e.touches[0].clientY - rect.top;
+      player.y = touchY - player.height / 2;
+      e.preventDefault();
+    }, { passive: false });
+
+    function update() {
+      // Ball movement
+      ball.x += ball.speedX;
+      ball.y += ball.speedY;
+
+      // AI movement
+      const aiCenter = ai.y + ai.height / 2;
+      if (aiCenter < ball.y - 15) {
+        ai.y += ai.speed;
+      } else if (aiCenter > ball.y + 15) {
+        ai.y -= ai.speed;
+      }
+
+      // Wall collision (top / bottom)
+      if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+        ball.speedY = -ball.speedY;
+        playSound(300);
+      }
+
+      // Paddle collision (Player)
+      if (
+        ball.x - ball.radius < player.x + player.width &&
+        ball.y > player.y &&
+        ball.y < player.y + player.height
+      ) {
+        ball.speedX = -ball.speedX * 1.05; // Slightly speed up
+        const deltaY = ball.y - (player.y + player.height / 2);
+        ball.speedY = deltaY * 0.15;
+        playSound(450);
+      }
+
+      // Paddle collision (AI)
+      if (
+        ball.x + ball.radius > ai.x &&
+        ball.y > ai.y &&
+        ball.y < ai.y + ai.height
+      ) {
+        ball.speedX = -ball.speedX * 1.05;
+        const deltaY = ball.y - (ai.y + ai.height / 2);
+        ball.speedY = deltaY * 0.15;
+        playSound(450);
+      }
+
+      // Scoring
+      if (ball.x - ball.radius < 0) {
+        ai.score++;
+        playSound(180);
+        ball.reset();
+      } else if (ball.x + ball.radius > canvas.width) {
+        player.score++;
+        playSound(600);
+        ball.reset();
+      }
+
+      // Keep paddles inside canvas
+      player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
+      ai.y = Math.max(0, Math.min(canvas.height - ai.height, ai.y));
+    }
+
+    function render() {
+      // Clear background
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Net line
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0);
+      ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw Paddles
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(ai.x, ai.y, ai.width, ai.height);
+
+      // Draw Ball
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+
+      // Scores
+      ctx.font = '700 32px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.fillText(player.score, canvas.width / 4, 50);
+      ctx.fillText(ai.score, (canvas.width / 4) * 3, 50);
+    }
+
+    function gameLoop() {
+      update();
+      render();
+      animId = requestAnimationFrame(gameLoop);
+    }
+
+    function openGame() {
+      modal.classList.add('active');
+      player.score = 0;
+      ai.score = 0;
+      ball.reset();
+      gameLoop();
+    }
+
+    function closeGame() {
+      modal.classList.remove('active');
+      cancelAnimationFrame(animId);
+    }
+  </script>
+</body>
+</html>
